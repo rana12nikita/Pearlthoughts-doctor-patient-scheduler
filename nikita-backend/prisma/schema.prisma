@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// -------------------------
+// DATABASE CONFIG
+// -------------------------
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// -------------------------
+// ENUMS
+// -------------------------
+enum UserRole {
+  PATIENT
+  DOCTOR
+}
+
+enum ScheduleType {
+  stream
+  wave
+}
+
+enum AppointmentStatus {
+  booked
+  cancelled
+  completed
+}
+
+// -------------------------
+// MODELS
+// -------------------------
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  role      UserRole
+  createdAt DateTime @default(now())
+
+  doctorProfile  Doctor?
+  patientProfile Patient?
+}
+
+model Doctor {
+  id                 Int         @id @default(autoincrement())
+  userId             Int         @unique
+  specialization     String
+  schedule_Type      ScheduleType @default(stream)
+  slot_duration_min  Int?        // per doctor
+  patients_per_slot  Int?        // wave scheduling
+  createdAt          DateTime    @default(now())
+
+  user           User            @relation(fields: [userId], references: [id])
+  availability   DoctorAvailability[]
+  appointments   Appointment[]
+}
+
+model Patient {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  createdAt DateTime @default(now())
+
+  user         User          @relation(fields: [userId], references: [id])
+  appointments Appointment[]
+}
+
+model DoctorAvailability {
+  id         Int      @id @default(autoincrement())
+  doctorId   Int
+  date       DateTime
+  session_start DateTime
+  session_end   DateTime
+  slot_duration_min Int?
+  patients_per_slot Int?
+
+  doctor       Doctor       @relation(fields: [doctorId], references: [id])
+  appointments Appointment[]
+}
+
+model Appointment {
+  id             Int               @id @default(autoincrement())
+  doctorId       Int
+  patientId      Int
+  availabilityId Int?
+  status         AppointmentStatus @default(booked)
+  date           DateTime
+  session        String
+
+  start_time     DateTime
+  end_time       DateTime
+  createdAt      DateTime @default(now())
+
+  doctor       Doctor            @relation(fields: [doctorId], references: [id])
+  patient      Patient           @relation(fields: [patientId], references: [id])
+  availability DoctorAvailability? @relation(fields: [availabilityId], references: [id])
+}
+
