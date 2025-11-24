@@ -1,0 +1,97 @@
+import { PrismaService } from '../prisma/prisma.service';
+export declare class AppointmentsService {
+    private prisma;
+    constructor(prisma: PrismaService);
+    create(doctorId: number, patientId: number, dto: any): Promise<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        priority: string;
+        sessionId: number;
+        doctorId: number | null;
+        availabilityId: number | null;
+        patientId: number;
+        date: Date | null;
+        startTime: Date;
+        endTime: Date;
+        duration: number;
+        status: string;
+        locked: boolean;
+    }>;
+    getPatientAppointments(patientId: number): Promise<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        priority: string;
+        sessionId: number;
+        doctorId: number | null;
+        availabilityId: number | null;
+        patientId: number;
+        date: Date | null;
+        startTime: Date;
+        endTime: Date;
+        duration: number;
+        status: string;
+        locked: boolean;
+    }[]>;
+    getDoctorAppointments(doctorId: number): Promise<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        priority: string;
+        sessionId: number;
+        doctorId: number | null;
+        availabilityId: number | null;
+        patientId: number;
+        date: Date | null;
+        startTime: Date;
+        endTime: Date;
+        duration: number;
+        status: string;
+        locked: boolean;
+    }[]>;
+    cancelAppointment(id: number): Promise<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        priority: string;
+        sessionId: number;
+        doctorId: number | null;
+        availabilityId: number | null;
+        patientId: number;
+        date: Date | null;
+        startTime: Date;
+        endTime: Date;
+        duration: number;
+        status: string;
+        locked: boolean;
+    }>;
+    moveAppointment(id: number, newStart: Date): Promise<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        priority: string;
+        sessionId: number;
+        doctorId: number | null;
+        availabilityId: number | null;
+        patientId: number;
+        date: Date | null;
+        startTime: Date;
+        endTime: Date;
+        duration: number;
+        status: string;
+        locked: boolean;
+    }>;
+    adjustSession(sessionId: number, body: any): Promise<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        doctorId: number;
+        date: Date;
+        startTime: Date;
+        endTime: Date;
+        slotDuration: number;
+        schedulingType: string | null;
+    }>;
+    private expandSession;
+}
